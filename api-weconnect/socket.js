@@ -11,7 +11,7 @@ class Sockets {
 		//Listen to new socket
 		this.io.sockets.on('connection', (socket) => { // on first connect of new socket id
 			//On disconnect Update firewall State
-			
+			io.local.emit("start", "start");
 			//Firewall drop DoS:DDoS
 			socket.on("disconnect", () => {
 				console.log("Au revoir")

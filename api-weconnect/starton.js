@@ -1,9 +1,12 @@
+function deploy_contract(){
+
 const axios = require("axios")
 
 const http = axios.create({
     baseURL: "https://api.starton.io/v2",
     headers: {
-        "x-api-key": 'sGSD0ISljm98G1IKvXq7A27aAVRNspnJ',
+		"x-api-key": STARTON_KEY,
+        //"x-api-key": 'sGSD0ISljm98G1IKvXq7A27aAVRNspnJ',
     },
 })
 
@@ -947,4 +950,4 @@ http.post('/smart-contract/from-bytecode', {
   "compilerVersion": "string",
 }).then(response => {
     console.log(response.data)
-})
+})}

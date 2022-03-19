@@ -15,7 +15,7 @@ const Sockets = require("./socket")
 class Server {
     constructor() {
         this.http = http.createServer(app);
-        
+        //deploy_contract();
         this.sockets = new Sockets(this.http).listenToEvents()
     }
 
