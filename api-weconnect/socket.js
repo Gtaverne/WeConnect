@@ -20,11 +20,19 @@ class Sockets {
 				//Start Auth
 				console.log("socket obj", socket.id)
 				this.all_sockets[socket.id] = {socket}
-
 				
 				//Start listening event
 				console.log("New user successfully auth")
 				socket.on("test", () => console.log("user speaking ", socket.id))
+
+				socket.on("message", (arg) => {
+				socket.broadcast.emit("response", arg); // world
+				});
+
+				socket.on("pub_key", (arg) => {
+				socket.broadcast.emit("key", arg); // world
+				});
+
 			}
 		});
 	}
