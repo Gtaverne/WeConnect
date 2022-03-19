@@ -15,7 +15,7 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
     // so far, we only manage the 1v1 conversation so a chat contains a PAIR of addresses
     address[2] private _members;
     mapping (uint256 => string) private _conversation;
-    mapping (uint256 => bool) private _msgEmitter;
+    mapping (uint256 => uint256) private _msgEmitter;
     uint256[2] private _lastReadMessage;
 
 //It could be interesting to make an ownership transfer
@@ -36,6 +36,8 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
 
         _members[0] = user1;
         _members[1] = user2;
+        _lastReadMessage[0] = 0;
+        _lastReadMessage[1] = 0;
 
     }
 
@@ -48,7 +50,7 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
 //     }
 
 // Minting of a message
-    function safeMintMessage(address to, bool userID, string memory hash) public onlyRole(MINTER_ROLE) {
+    function safeMintMessage(address to, uint256 userID, string memory hash) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
@@ -56,11 +58,11 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
         _conversation[_tokenIdCounter.current()] = hash;
         _msgEmitter[_tokenIdCounter.current()] = userID;
         //A user cannot send a message without having read all the previous ones
-        _lastReadMessage[userID ? 1 : 0] = _tokenIdCounter.current();
+        _lastReadMessage[userID] = tokenId + 1;
     }
 
 // Minting of a message with multimedia content
-    function safeMintMessage(address to, bool userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {
+    function safeMintMessage(address to, uint256 userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
@@ -71,7 +73,7 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
         _setTokenURI(tokenId, uri);
 
         //A user cannot send a message without having read all the previous ones
-        _lastReadMessage[userID ? 1 : 0] = _tokenIdCounter.current();
+        _lastReadMessage[userID] = tokenId + 1;
     }
 
     // The following functions are overrides required by Solidity.
@@ -108,35 +110,53 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
     }
 
 //Each time a user opens the app or updates its reading list
-    function userOpensApp(bool userID) internal
+    function userRefreshesApp(uint256 userID) public
     {
         _ack(_tokenIdCounter.current(), userID);
     }
 
+//Last message read by a user
+    function lastReadMessage0() public view returns (uint256)
+    {
+        return _lastReadMessage[0];
+    }
+
+    //Last message read by a user
+    function lastReadMessage1() public view returns (uint256)
+    {
+        return _lastReadMessage[1];
+    }
+
+
 // To retrieve a message - used by the scanner
     function retrieveMessage(uint256 tokenId) public view returns (string memory)
     {
-        return _conversation[tokenId];
+        if (tokenId < _tokenIdCounter.current())
+            return _conversation[tokenId];
+        return _conversation[_tokenIdCounter.current()];
     }
 
 // Acknowledgement
-    function _ack(uint256 tokenId, bool userID) internal
+    function _ack(uint256 tokenId, uint256 userID) internal
     {
-        if (_lastReadMessage[userID ? 1 : 0] < tokenId)
-            _lastReadMessage[userID ? 1 : 0] = tokenId;
+        if (_lastReadMessage[userID] < tokenId)
+            _lastReadMessage[userID] = tokenId;
     }
 
-// To retrieve the sender ID
-    function retrieveSenderID(uint256 tokenId) public view returns (bool)
+// To retrieve the sender ID of a given message
+    function retrieveSenderID(uint256 tokenId) public view returns (uint256)
     {
-        return _msgEmitter[tokenId];
+        if (tokenId < _tokenIdCounter.current())
+            return _msgEmitter[tokenId];
+        return _msgEmitter[_tokenIdCounter.current()];
     }
 
-// To retrieve the sender address
+// To retrieve the sender address of a given message
     function retrieveSenderAddress(uint256 tokenId) public view returns (address)
     {
-        
-        return _members[_msgEmitter[tokenId]? 1 : 0];
+        if (tokenId < _tokenIdCounter.current())
+            return _members[_msgEmitter[tokenId]];
+        return _members[_msgEmitter[_tokenIdCounter.current()]];
     }
 
 
