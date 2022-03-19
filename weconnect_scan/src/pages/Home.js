@@ -1,6 +1,8 @@
 import UserResults from "../components/users/UserResults";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import generatekeypair from "../components/layout/crypto/generateKeyPair";
+import UserItem from "../components/users/UserItem";
 
 function Home() {
 	const [hash, setHash] = useState("");
@@ -39,6 +41,7 @@ function Home() {
 		console.log(keyPair.publicKeyJwk);
 		console.log(keyPair.privateKeyJwk);
 		console.log(JSON.stringify(keyPair, null, 4));
+		console.log();
 	};
 
 	useEffect(() => {
@@ -48,17 +51,34 @@ function Home() {
 		handleGenerateClick();
 	}, []);
 
-	const PrettyPrintJson = ({ data }) => (
-		<div>
-			<pre>{JSON.stringify(data, null, 2)}</pre>
-		</div>
-	);
-	function createMarkup() {
-		return { __html: "First &middot; Second" };
+	function CustomDisplay() {
+		return JSON.stringify(keyPair, null, 4);
 	}
 
-	function MyComponent() {
-		return <div dangerouslySetInnerHTML={createMarkup()} />;
+	function CustomDisplay2() {
+		// console.log("IMPORTANT");
+		console.log(window.location.search.substring(1).split("&").join("=").split("="));
+		const elemURL = window.location.search.substring(1).split("&").join("=").split("=");
+		return (
+			<div className="oui">
+				<p className="leading-10 font-bold text-3xl mb-6">URL Content:</p>
+				<hr class="solid"></hr>
+				<div className="flex">
+					<div className="w-1/2 leading-10">{elemURL[0]}:</div>
+					<div className="leading-10">{elemURL[1]}</div>
+				</div>
+				<hr class="solid"></hr>
+				<div className="flex">
+					<div className="w-1/2 leading-10">{elemURL[2]}:</div>
+					<div className="leading-10">{elemURL[3]}</div>
+				</div>
+				<hr class="solid"></hr>
+				<div className="flex">
+					<div className="w-1/2 leading-10">{elemURL[4]}:</div>
+					<div className="leading-10">{elemURL[5]}</div>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -106,9 +126,11 @@ function Home() {
 			{/* <UserResults />
 			<h1 className="text-6xl">Welcome</h1>
 			{process.env.REACT_APP_GITHUB_URL} */}
-			{keyPair ? JSON.stringify(keyPair, null, 4) : null}
-			{keyPair ? MyComponent() : null}
+			{/* {keyPair ? JSON.stringify(keyPair, null, 4) : null} */}
+			{/* {keyPair ? CustomDisplay() : null} */}
+			{keyPair ? CustomDisplay2() : null}
 		</>
 	);
 }
+
 export default Home;
