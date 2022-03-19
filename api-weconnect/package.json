@@ -1,0 +1,22 @@
+{
+  "name": "api-weconnect",
+  "version": "1.0.0",
+  "description": "Blockchain certified chat application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "WeConnect",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "express": "^4.17.3",
+    "http": "^0.0.1-security",
+    "moment": "^2.29.1",
+    "mongoose": "^6.2.7",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
