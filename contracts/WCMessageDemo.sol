@@ -50,31 +50,39 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
 //     }
 
 // Minting of a message
-    function safeMintMessage(address to, uint256 userID, string memory hash) public onlyRole(MINTER_ROLE) {
+    function safeMintMessage(address SenderAddress, address ReceiverAddress, string memory hash) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(SenderAddress, tokenId);
 
         _conversation[_tokenIdCounter.current()] = hash;
-        _msgEmitter[_tokenIdCounter.current()] = userID;
+
+        require ((SenderAddress == _members[0] || SenderAddress == _members[1]) && ReceiverAddress == _members[0] || ReceiverAddress == _members[1]);
+        if (SenderAddress == _members[0] && ReceiverAddress == _members[1])
+        {
+            _msgEmitter[_tokenIdCounter.current()] = 0;
+
+        }
+        else
+            _msgEmitter[_tokenIdCounter.current()] = 1;
         //A user cannot send a message without having read all the previous ones
         // _lastReadMessage[userID] = tokenId + 1;
     }
 
 // Minting of a message with multimedia content
-    function safeMintMessage(address to, uint256 userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+    // function safeMintMessage(address to, uint256 userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {
+    //     uint256 tokenId = _tokenIdCounter.current();
+    //     _tokenIdCounter.increment();
+    //     _safeMint(to, tokenId);
 
-        _conversation[_tokenIdCounter.current()] = hash;
-        _msgEmitter[_tokenIdCounter.current()] = userID;
+    //     _conversation[_tokenIdCounter.current()] = hash;
+    //     _msgEmitter[_tokenIdCounter.current()] = userID;
 
-        _setTokenURI(tokenId, uri);
+    //     _setTokenURI(tokenId, uri);
 
-        //A user cannot send a message without having read all the previous ones
-        // _lastReadMessage[userID] = tokenId + 1;
-    }
+    //     A user cannot send a message without having read all the previous ones
+    //     _lastReadMessage[userID] = tokenId + 1;
+    // }
 
     // The following functions are overrides required by Solidity.
 
