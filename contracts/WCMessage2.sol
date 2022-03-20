@@ -6,10 +6,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/draft-ERC721Votes.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl, EIP712, ERC721Votes {
+contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl, EIP712 {
     using Counters for Counters.Counter;
 
     // so far, we only manage the 1v1 conversation so a chat contains a PAIR of addresses
@@ -18,7 +17,6 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
     mapping (uint256 => uint256) private _msgEmitter;
     uint256[2] private _lastReadMessage;
 
-//It could be interesting to make an ownership transfer
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     Counters.Counter private _tokenIdCounter;
 
@@ -42,39 +40,36 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
     }
 
 // Original function of the ERC 721
-    function safeMintMessage(address to, string memory uri) public onlyRole(MINTER_ROLE) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-    }
+//     function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
+//         uint256 tokenId = _tokenIdCounter.current();
+//         _tokenIdCounter.increment();
+//         _safeMint(to, tokenId);
+//         _setTokenURI(tokenId, uri);
+//     }
 
 // Minting of a message
-    // function safeMintMessage(address to, uint256 userID, string memory hash) public onlyRole(MINTER_ROLE) {
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     _tokenIdCounter.increment();
-    //     _safeMint(to, tokenId);
-
-    //     _conversation[_tokenIdCounter.current()] = hash;
-    //     _msgEmitter[_tokenIdCounter.current()] = userID;
-    //     //A user cannot send a message without having read all the previous ones
-    //     _lastReadMessage[userID] = tokenId + 1;
-    // }
-
-// Minting of a message with multimedia content
-    function safeMintMessage(address to, uint256 userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {
+//for the demo, MINTER_ROLE
+    function safeMintMessage(address SenderAddress, address ReceiverAddress, string memory hash) public onlyRole(MINTER_ROLE)  {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+
+        //Warrants the ownership of the message by the sender
+        _safeMint(SenderAddress, tokenId);
 
         _conversation[_tokenIdCounter.current()] = hash;
-        _msgEmitter[_tokenIdCounter.current()] = userID;
 
-        _setTokenURI(tokenId, uri);
-
+//This function will need to be tuned to group function
+        require ((SenderAddress == _members[0] && ReceiverAddress == _members[1]) || (ReceiverAddress == _members[0] || SenderAddress == _members[1]));
+        if (SenderAddress == _members[0] && ReceiverAddress == _members[1])
+        {
+            _msgEmitter[_tokenIdCounter.current()] = 0;
+        }
+        else
+            _msgEmitter[_tokenIdCounter.current()] = 1;
         //A user cannot send a message without having read all the previous ones
-        _lastReadMessage[userID] = tokenId + 1;
+        // _lastReadMessage[userID] = tokenId + 1;
     }
+
 
     // The following functions are overrides required by Solidity.
 
@@ -87,7 +82,7 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
 
     function _afterTokenTransfer(address from, address to, uint256 tokenId)
         internal
-        override(ERC721, ERC721Votes)
+        override(ERC721)
     {
         super._afterTokenTransfer(from, to, tokenId);
     }
@@ -115,17 +110,23 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
         _ack(_tokenIdCounter.current(), userID);
     }
 
-//Last message read by a user
-    function lastReadMessage0() public view returns (uint256)
+//Last message read by user0
+    function lastReadMessageByUID(uint256 userID) public view returns (uint256)
     {
-        return _lastReadMessage[0];
+        return _lastReadMessage[userID];
     }
 
-    //Last message read by a user
-    function lastReadMessage1() public view returns (uint256)
-    {
-        return _lastReadMessage[1];
-    }
+//Last message read by user0
+//     function lastReadMessage0() public view returns (uint256)
+//     {
+//         return _lastReadMessage[0];
+//     }
+
+// Last message read by user1
+//     function lastReadMessage1() public view returns (uint256)
+//     {
+//         return _lastReadMessage[1];
+//     }
 
 
 // To retrieve a message - used by the scanner
