@@ -1,4 +1,7 @@
 const socketIO = require("socket.io");
+const abiDecoder = require('abi-decoder');
+const testABI = require('./abi.json');
+
 // var crypto = require('crypto');
 // var hash = crypto.createHash('sha256');
 
@@ -94,6 +97,9 @@ class Sockets {
 					socket.broadcast.emit("key", arg); // world
 				});
 
+				//socket.on("decode", (arg) => {
+
+				//	};
 			}
 		});
 	}
