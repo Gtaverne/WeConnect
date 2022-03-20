@@ -67,19 +67,23 @@ class Sockets {
 				console.log("New user successfully auth")
 				socket.on("test", () => console.log("user speaking ", socket.id))
 
-				socket.on("message", async (arg) => {
+				socket.on("message", async (arg, sender, receiver, id) => {
 
 					//Hash
-					var code = arg.message
+					var code = arg
 					code = sha256(code)
-					var receiverAddress = arg.address
+					var receiverAddress = receiver
+					var senderAddress = sender
 					console.log(code, arg)
 					//Mint 
+					socket.broadcast.emit("response", arg, id); // world
 
-					// mint_response = await mint_message(receiverAddress, code, this.address)
+					// mint_response = await mint_message(senderAddress, receiverAddress, code)
 					// console.log(mint_response)
 					//Emit
-					socket.broadcast.emit("response", arg.message); // world
+
+					//socket.broadcast.emit("blockchained", id, mint_response); // world
+
 				});
 
 				socket.on("pub_key", (arg) => {

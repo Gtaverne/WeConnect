@@ -47,7 +47,7 @@ const deploy_contract = async () => {
 	// 	return ("Error " + e)
 	// })
 }
-const mint_message = async (receiverAddress, msg, SMART_CONTRACT_ADDRESS) => {
+const mint_message = async (receiverAddress, SMART_CONTRACT_ADDRESS, msg,) => {
 	console.log("Minting...", receiverAddress, msg)
 	const SMART_CONTRACT_NETWORK = "polygon-mumbai";
 	// const SMART_CONTRACT_ADDRESS = ;
@@ -56,7 +56,7 @@ const mint_message = async (receiverAddress, msg, SMART_CONTRACT_ADDRESS) => {
 		functionName: "safeMintMessage",
 		signerWallet: WALLET_IMPORTED_ON_STARTON,
 		speed: "low",
-		params: [receiverAddress, msg],
+		params: [senderAddress, receiverAddress, msg],
 	});
 	// console.log("NFT Starton ", nft.data)
 
