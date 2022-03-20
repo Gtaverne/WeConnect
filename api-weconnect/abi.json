@@ -390,6 +390,25 @@
 				"type": "uint256"
 			}
 		],
+		"name": "retrieveAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
 		"name": "retrieveMessage",
 		"outputs": [
 			{
@@ -461,45 +480,17 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "to",
+				"name": "SenderAddress",
 				"type": "address"
 			},
-			{
-				"internalType": "uint256",
-				"name": "userID",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "hash",
-				"type": "string"
-			}
-		],
-		"name": "safeMintMessage",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
 			{
 				"internalType": "address",
-				"name": "to",
+				"name": "ReceiverAddress",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "userID",
-				"type": "uint256"
 			},
 			{
 				"internalType": "string",
 				"name": "hash",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "uri",
 				"type": "string"
 			}
 		],

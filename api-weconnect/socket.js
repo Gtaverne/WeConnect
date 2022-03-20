@@ -74,15 +74,19 @@ class Sockets {
 					code = sha256(code)
 					var receiverAddress = receiver
 					var senderAddress = sender
+					// var receiverAddress = await userAdress(0)
+					// var senderAddress = sender
+					console.log(receiver)
+					console.log(sender)
 					console.log(code, arg)
 					//Mint 
 					socket.broadcast.emit("response", arg, id); // world
 
-					// mint_response = await mint_message(senderAddress, receiverAddress, code)
-					// console.log(mint_response)
+					const mint_response = await mint_message(senderAddress, receiverAddress, code)
+					//console.log("hash:" + mint_response.transactionHash)
 					//Emit
 
-					//socket.broadcast.emit("blockchained", id, mint_response); // world
+					this.io.local.emit("blockchained", id, mint_response.transactionHash); // world
 
 				});
 

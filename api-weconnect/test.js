@@ -11,10 +11,7 @@ socket.on("connect_error", () => {
 socket.on("connect", () => {
     console.log("Socket established to server")
     //action
-    socket.emit("message", {
-        message: "hello world",
-        address: "0x8111558D25E134ABCF4B792e11e22f03c08ec891"
-    })
+    socket.emit("message", "hello world", "0x930AC6Cfa1357e1E11577eF5C7523AC498f970ca", "0x0a3BC00b276beD4848556bd45BbEa62C94B9079E")
 });
 
 socket.on("response", async (msg) => {

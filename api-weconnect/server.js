@@ -37,8 +37,9 @@ class Server {
 app.use(index);
 
 const init = async () => {
-    const address = "0x6CBE446cBA77aAB5F823233B9128aD620eEc8A7A" //await deploy_contract();
-    console.log('address', address)
+    const address = await deploy_contract(); //"0x6CBE446cBA77aAB5F823233B9128aD620eEc8A7A" 
+    console.log('address', address);
+    global.contrat = address;
     const server = new Server(address).listen()
 }
 init()
