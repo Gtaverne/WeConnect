@@ -25,7 +25,7 @@ const Guard = require("./auth");
 const {
 	mint_message,
 	deploy_contract
-} = require("./straton");
+} = require("./starton");
 const {
 	start
 } = require("repl");
@@ -73,12 +73,10 @@ class Sockets {
 					var code = arg.message
 					code = sha256(code)
 					var receiverAddress = arg.address
-					// code = hash.update(code);
-					// code = hash.digest(code);
 					console.log(code, arg)
 					//Mint 
 
-					mint_response = await mint_message(receiverAddress, code, this.address)
+					// mint_response = await mint_message(receiverAddress, code, this.address)
 					// console.log(mint_response)
 					//Emit
 					socket.broadcast.emit("response", arg.message); // world

@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const {
     mint_message,
     deploy_contract
-} = require("./straton");
+} = require("./starton");
 
 
 // const socketio = require('socket.io'); 
