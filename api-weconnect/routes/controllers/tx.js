@@ -1,4 +1,5 @@
 const express = require('express');
+
 const {
     process_params
 } = require('express/lib/router');
@@ -7,10 +8,14 @@ const Tx = require('../../models/tx');
 const axios = require('axios')
 const abiDecoder = require("abi-decoder");
 const testABI = require('../../abi.json');
+const { append } = require('express/lib/response');
+
 
 router.route('/api/:hash')
     .get(async (req, res) => {
         const txhash = req.params.hash
+
+        res.set('Access-Control-Allow-Origin', req.get('origin'))
 
         console.log(txhash);
 

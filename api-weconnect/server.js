@@ -10,12 +10,27 @@ const {
 
 
 // const socketio = require('socket.io'); 
-const PORT = 3000 || process.env.PORT;
+const PORT = 3005 || process.env.PORT;
 
 // const io = socketio(server);
 const Sockets = require("./socket")
 
 const app = express();
+app.use(function (req, res) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3005');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+});
 
 const index = require("./routes");
 // const hash_msg = (msg) =>  //crypto.hash(msg)
