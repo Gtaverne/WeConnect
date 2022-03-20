@@ -7,10 +7,12 @@ import UserItem from "../components/users/UserItem";
 function Home() {
 	const [hash, setHash] = useState("");
 	const [key, setKey] = useState("");
+	const [id, setId] = useState("");
 	const [keyPair, setKeyPair] = useState(null);
 
 	const handleChangeHash = (e) => setHash(e.target.value);
 	const handleChangeKey = (e) => setKey(e.target.value);
+	const handleChangeId = (e) => setId(e.target.value);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -49,6 +51,17 @@ function Home() {
 		// console.log(publicKeyJwk)
 		// console.log(privateKeyJwk)
 		handleGenerateClick();
+		const elemURL = window.location.search.substring(1).split("&").join("=").split("=");
+
+		if (elemURL[0] === "key") {
+			setKey(elemURL[1]);
+		}
+		if (elemURL[2] === "message") {
+			setHash(elemURL[3]);
+		}
+		if (elemURL[4] === "id") {
+			setId(elemURL[5]);
+		}
 	}, []);
 
 	function CustomDisplay() {
@@ -59,20 +72,21 @@ function Home() {
 		// console.log("IMPORTANT");
 		console.log(window.location.search.substring(1).split("&").join("=").split("="));
 		const elemURL = window.location.search.substring(1).split("&").join("=").split("=");
+
 		return (
 			<div className="oui">
 				<p className="leading-10 font-bold text-3xl mb-6">URL Content:</p>
-				<hr class="solid"></hr>
+				<hr className="solid"></hr>
 				<div className="flex">
 					<div className="w-1/2 leading-10">{elemURL[0]}:</div>
 					<div className="leading-10">{elemURL[1]}</div>
 				</div>
-				<hr class="solid"></hr>
+				<hr className="solid"></hr>
 				<div className="flex">
 					<div className="w-1/2 leading-10">{elemURL[2]}:</div>
 					<div className="leading-10">{elemURL[3]}</div>
 				</div>
-				<hr class="solid"></hr>
+				<hr className="solid"></hr>
 				<div className="flex">
 					<div className="w-1/2 leading-10">{elemURL[4]}:</div>
 					<div className="leading-10">{elemURL[5]}</div>
@@ -91,9 +105,29 @@ function Home() {
 								<input
 									type="text"
 									className="w-full pr-40 bg-gray-200 input input-lg text-black"
-									placeholder="Hash"
+									placeholder="Message"
 									value={hash}
 									onChange={handleChangeHash}
+								/>
+								{/* <button type="submit" className="absolute top-0 right-0 rounded-l-none w-36 btn btn-lg">
+									Go
+								</button> */}
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div className="grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-2 mb-8 gap-8">
+				<div>
+					<form onSubmit={handleSubmit}>
+						<div className="form-control">
+							<div className="relative">
+								<input
+									type="text"
+									className="w-full pr-40 bg-gray-200 input input-lg text-black"
+									placeholder="Id"
+									value={id}
+									onChange={handleChangeId}
 								/>
 								{/* <button type="submit" className="absolute top-0 right-0 rounded-l-none w-36 btn btn-lg">
 									Go

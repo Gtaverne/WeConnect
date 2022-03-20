@@ -3,6 +3,7 @@ import Navbar from "./components/layout/Navbar";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Footer from "./components/layout/Footer";
 
 function App() {
 	return (
@@ -18,6 +19,7 @@ function App() {
 						<Route path="/*" element={<NotFound />} />
 					</Routes>
 				</main>
+				{/* <Footer /> */}
 			</div>
 		</Router>
 	);
