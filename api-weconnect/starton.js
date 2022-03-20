@@ -25,7 +25,7 @@ const deploy_contract = async () => {
 		"signerWallet": process.env.WALLET_STARTON,
 		"params": [ // parameter values for the smart contract constructors, this will change depending of your contract
 			`0x930AC6Cfa1357e1E11577eF5C7523AC498f970ca`,
-			`0x930AC6Cfa1357e1E11577eF5C7523AC498f970ca`,
+			`0x0a3BC00b276beD4848556bd45BbEa62C94B9079E`,
 			//`${user1}`,
 			// `${user2}`,
 		],
@@ -47,16 +47,18 @@ const deploy_contract = async () => {
 	// 	return ("Error " + e)
 	// })
 }
-const mint_message = async (receiverAddress, msg, SMART_CONTRACT_ADDRESS) => {
+const mint_message = async (senderAddress, receiverAddress, msg) => {
 	console.log("Minting...", receiverAddress, msg)
+	console.log("Minting...", senderAddress)
+
 	const SMART_CONTRACT_NETWORK = "polygon-mumbai";
-	// const SMART_CONTRACT_ADDRESS = ;
+	const SMART_CONTRACT_ADDRESS = global.contrat;
 	const WALLET_IMPORTED_ON_STARTON = process.env.WALLET_STARTON;
 	const nft = await http.post(`/smart-contract/${SMART_CONTRACT_NETWORK}/${SMART_CONTRACT_ADDRESS}/call`, {
 		functionName: "safeMintMessage",
 		signerWallet: WALLET_IMPORTED_ON_STARTON,
 		speed: "low",
-		params: [receiverAddress, msg],
+		params: [senderAddress, receiverAddress, msg],
 	});
 	// console.log("NFT Starton ", nft.data)
 

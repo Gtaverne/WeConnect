@@ -1,11 +1,10 @@
 export default async (text, derivedKey) => {
 	const encodedText = new TextEncoder().encode(text);
 
-	const encryptedData = await window.crypto.subtle.encrypt(
-		{ name: "AES-GCM", iv: new TextEncoder().encode("Initialization Vector") },
-		derivedKey,
-		encodedText
-	);
+	const iv = new Uint8Array(1);
+	iv[0] = 0;
+
+	const encryptedData = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, derivedKey, encodedText);
 
 	const uintArray = new Uint8Array(encryptedData);
 

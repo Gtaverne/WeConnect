@@ -5,24 +5,27 @@ const {
 const router = express.Router();
 const Tx = require('../../models/tx');
 const axios = require('axios')
+const abiDecoder = require("abi-decoder");
+const testABI = require('../../abi.json');
 
-router.route('/tx/:utxo')
+router.route('/api/:hash')
     .get(async (req, res) => {
-        const txhash = req.params.utxo
-        console.log("ID from param", id)
-        const http = await axios.get("https://api.polygonscan.com/api", {
-            params: {
-                module: "proxy",
-                action: "eth_getTransactionByHash",
-                txhash,
-                apikey: process.env.POLYGON_SCANNER_API
-            }
-        })
-        console.log(http.data)
+        const txhash = req.params.hash
+
+        console.log(txhash);
+
+        abiDecoder.addABI(testABI);
+
+        const decodedData = abiDecoder.decodeMethod(txhash);
+        // web3.eth.getTransactionReceipt("0x4d54db4e722ca622d9744b896b24756831080185085b121c9939423aea96ea76", function(e, receipt) {
+        // const decodedLogs = abiDecoder.decodeLogs(receipt.logs);
+        console.log("decoded", decodedData);
+        // });
+
         //Pull TX
         res.json({
             status: true,
-            response: http.data
+            response: decodedData.params
         })
     })
 module.exports = router;

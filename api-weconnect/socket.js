@@ -1,4 +1,7 @@
 const socketIO = require("socket.io");
+const abiDecoder = require('abi-decoder');
+const testABI = require('./abi.json');
+
 // var crypto = require('crypto');
 // var hash = crypto.createHash('sha256');
 
@@ -67,25 +70,36 @@ class Sockets {
 				console.log("New user successfully auth")
 				socket.on("test", () => console.log("user speaking ", socket.id))
 
-				socket.on("message", async (arg) => {
+				socket.on("message", async (arg, sender, receiver, id) => {
 
 					//Hash
-					var code = arg.message
+					var code = arg
 					code = sha256(code)
-					var receiverAddress = arg.address
+					var receiverAddress = receiver
+					var senderAddress = sender
+					// var receiverAddress = await userAdress(0)
+					// var senderAddress = sender
+					console.log(receiver)
+					console.log(sender)
 					console.log(code, arg)
 					//Mint 
+					socket.broadcast.emit("response", arg, id); // world
 
-					// mint_response = await mint_message(receiverAddress, code, this.address)
-					// console.log(mint_response)
+					const mint_response = await mint_message(senderAddress, receiverAddress, code)
+					//console.log("hash:" + mint_response.transactionHash)
 					//Emit
-					socket.broadcast.emit("response", arg.message); // world
+
+					this.io.local.emit("blockchained", id, mint_response.transactionHash); // world
+
 				});
 
 				socket.on("pub_key", (arg) => {
 					socket.broadcast.emit("key", arg); // world
 				});
 
+				//socket.on("decode", (arg) => {
+
+				//	};
 			}
 		});
 	}

@@ -9,7 +9,7 @@ function App() {
 	return (
 		<Router>
 			<div className="flex flex-col h-screen">
-				 {/* justify-between */}
+				{/* justify-between */}
 				<Navbar />
 				<main className="container mx-auto px-3 pb-12">
 					<Routes>
