@@ -42,24 +42,24 @@ contract WeConnect is ERC721, ERC721Enumerable, ERC721URIStorage, AccessControl,
     }
 
 // Original function of the ERC 721
-//     function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
-//         uint256 tokenId = _tokenIdCounter.current();
-//         _tokenIdCounter.increment();
-//         _safeMint(to, tokenId);
-//         _setTokenURI(tokenId, uri);
-//     }
-
-// Minting of a message
-    function safeMintMessage(address to, uint256 userID, string memory hash) public onlyRole(MINTER_ROLE) {
+    function safeMintMessage(address to, string memory uri) public onlyRole(MINTER_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-
-        _conversation[_tokenIdCounter.current()] = hash;
-        _msgEmitter[_tokenIdCounter.current()] = userID;
-        //A user cannot send a message without having read all the previous ones
-        _lastReadMessage[userID] = tokenId + 1;
+        _setTokenURI(tokenId, uri);
     }
+
+// Minting of a message
+    // function safeMintMessage(address to, uint256 userID, string memory hash) public onlyRole(MINTER_ROLE) {
+    //     uint256 tokenId = _tokenIdCounter.current();
+    //     _tokenIdCounter.increment();
+    //     _safeMint(to, tokenId);
+
+    //     _conversation[_tokenIdCounter.current()] = hash;
+    //     _msgEmitter[_tokenIdCounter.current()] = userID;
+    //     //A user cannot send a message without having read all the previous ones
+    //     _lastReadMessage[userID] = tokenId + 1;
+    // }
 
 // Minting of a message with multimedia content
     function safeMintMessage(address to, uint256 userID, string memory hash, string memory uri) public onlyRole(MINTER_ROLE) {

@@ -15,7 +15,9 @@
     "http": "^0.0.1-security",
     "moment": "^2.29.1",
     "mongoose": "^6.2.7",
-    "socket.io": "^4.4.1"
+    "node-fetch": "^3.2.3",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
