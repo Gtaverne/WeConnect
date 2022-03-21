@@ -1,8 +1,5 @@
-import UserResults from "../components/users/UserResults";
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
-import generatekeypair from "../components/layout/crypto/generateKeyPair";
-import UserItem from "../components/users/UserItem";
+import { useSearchParams } from "react-router-dom";
 import encrypt from "../components/layout/crypto/encrypt";
 
 //utxo represente la Transaction Hash
@@ -15,11 +12,9 @@ function Home() {
 	const [id, setId] = useState("");
 	const [dianee, setDianee] = useState("");
 	const [messageCrypted, setMessageCrypted] = useState("");
-	const [keyCrypted, setKeyCrypted] = useState("");
 	const [haveInput, setHaveInput] = useState(false);
 
 	const [address, setAddress] = useState("");
-	const [loadingAddress, setLoadingAddress] = useState(true);
 
 	const handleChangeHash = (e) => setHash(e.target.value);
 	const handleChangeKey = (e) => setKey(e.target.value);
@@ -31,11 +26,6 @@ function Home() {
 		e.preventDefault();
 
 		if (hash !== "" || key !== "") {
-			// dispatch({ type: "SET_LOADING" });
-			// const users = await searchUsers(text);
-			// dispatch({ type: "GET_USERS", payload: users });
-
-			// setText("");
 			console.log(hash);
 			console.log(key);
 		}
@@ -48,41 +38,28 @@ function Home() {
 			{}
 		);
 		const transaction_list = await response.json();
-		console.log("transaction_list: ", transaction_list);
+		console.log("transaction_list from polygonscan: ", transaction_list);
+		console.log(JSON.stringify(transaction_list));
 
 		setAddress(transaction_list);
-		setLoadingAddress(false);
 
 		const diane = await fetch(`http://167.71.129.58:3000/api/api/${transaction_list.result.input}`, {});
 
-		setDianee(JSON.stringify(await diane.json()));
+		const diane_response = await diane.json();
+		console.log("response from Diane decryption: ", diane_response);
+		console.log(JSON.stringify(diane_response));
+		setDianee(JSON.stringify(diane_response));
+		console.log(diane_response.response[2].value);
+
 		setHaveInput(true);
 	};
-	/*
-	const fetchDiane = async () => {
-		const response = await fetch(
-			`https://api-mumbai.polygonscan.com/api?module=proxy&action=eth_getTransactionByHash&txhash=${id}&apikey=${process.env.REACT_APP_POLYGONSCAN_APIKEY}`,
-			{}
-		);
-		const transaction_list = await response.json();
-		console.log(transaction_list);
-
-		setAddress(transaction_list);
-		setLoadingAddress(false);
-	};
-*/
-	function displayJson(JSON) {
-		JSON.stringify({ foo: "sample", bar: "sample" }, null, 4);
-	}
-
-	const handleGenerateClick = async () => {};
 
 	const display = async (e) => {
 		e.preventDefault();
 
 		console.log("Display");
-
-		console.log();
+		console.log(realhash);
+		console.log(JSON.parse(dianee).response[2].value);
 	};
 
 	async function sha256(message) {
@@ -101,22 +78,6 @@ function Home() {
 	}
 
 	useEffect(async () => {
-		// const [publicKeyJwk, privateKeyJwk] = generatekeypair();
-		// console.log(publicKeyJwk)
-		// console.log(privateKeyJwk)
-		handleGenerateClick();
-		/*const elemURL_3 = window.location.search.substring(1).split("&").join("=").split("=");
-
-		if (elemURL[0] === "key") {
-			setKey(elemURL[1]);
-		}
-		if (elemURL[2] === "message") {
-			setHash(elemURL[3]);
-		}
-		if (elemURL[4] === "id") {
-			setId(elemURL[5]);
-		}*/
-
 		let keyBase = searchParams.get("key");
 		let messageBase = searchParams.get("message");
 		let utxo = searchParams.get("utxo");
@@ -135,46 +96,21 @@ function Home() {
 
 		let message = atob(messageBase);
 
-		console.log(message);
+		console.log("messge in base normal: " + message);
 
 		let message_encrypted = await encrypt(message, key);
 
 		//console.log(await sha256(message_encrypted));
 
-		setRealHash(await sha256(message_encrypted));
+		let hash_temp = await sha256(message_encrypted);
 
-		//console.log(encodedStringBtoA);
+		setRealHash(hash_temp);
+		console.log(hash_temp);
 
 		fetchAddress(utxo);
 	}, []);
 
-	function CustomDisplayPolygon() {
-		return (
-			<>
-				<hr className="solid"></hr>
-
-				<div className="oui">
-					{/* <p className="leading-10 font-bold text-3xl mb-6">Transaction Details</p>
-				<hr className="solid"></hr>
-				<div className="flex">
-				<div className="w-1/2 leading-10">a:</div>
-				<div className="leading-10">{address.result}</div>
-				</div>
-				<hr className="solid"></hr>
-				<div className="flex">
-				<div className="w-1/2 leading-10">Transaction id:</div>
-				<div className="leading-10">{address.id}</div>
-				</div>
-			<hr className="solid"></hr> */}
-					{address.id}
-				</div>
-			</>
-		);
-	}
-
 	function CustomDisplay2() {
-		// console.log("IMPORTANT");
-		console.log(window.location.search.substring(1).split("&").join("=").split("="));
 		const elemURL = window.location.search.substring(1).split("&").join("=").split("=");
 
 		return (
@@ -205,17 +141,13 @@ function Home() {
 	}
 
 	function CustomDisplay3() {
-		// console.log("IMPORTANT");
-		console.log(window.location.search.substring(1).split("&").join("=").split("="));
-		const elemURL = window.location.search.substring(1).split("&").join("=").split("=");
-
 		return (
 			<div className="oui">
 				<p className="leading-10 font-bold text-3xl mb-6">PolygonScan:</p>
 				<hr className="solid"></hr>
 				<div className="">
 					<div className="w-1/2 leading-10">Is message valid:</div>
-					<div className="leading-10">{dianee.includes(realhash) ? "YES" : "NO"}</div>
+					<div className="leading-10">{realhash === JSON.parse(dianee).response[2].value ? "YES" : "NO"}</div>
 				</div>
 				<hr className="solid"></hr>
 				<div className="">
@@ -252,9 +184,6 @@ function Home() {
 									value={messageCrypted}
 									onChange={handleChangeHash}
 								/>
-								{/* <button type="submit" className="absolute top-0 right-0 rounded-l-none w-36 btn btn-lg">
-									Go
-								</button> */}
 							</div>
 						</div>
 					</form>
@@ -272,9 +201,6 @@ function Home() {
 									value={id}
 									onChange={handleChangeId}
 								/>
-								{/* <button type="submit" className="absolute top-0 right-0 rounded-l-none w-36 btn btn-lg">
-									Go
-								</button> */}
 							</div>
 						</div>
 					</form>
@@ -300,10 +226,6 @@ function Home() {
 					</form>
 				</div>
 			</div>
-			{/* <UserResults />
-			<h1 className="text-6xl">Welcome</h1>
-			{process.env.REACT_APP_GITHUB_URL} */}
-			{/* {CustomDisplayPolygon()} */}
 		</>
 	);
 }
